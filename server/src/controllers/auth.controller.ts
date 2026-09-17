@@ -7,8 +7,6 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import {
   FRONTEND_URL,
-  NODE_ENV,
-  PROD_FRONTEND_URL,
   REFRESH_TOKEN_SECRET,
 } from "../config/config.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -118,13 +116,7 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   res.cookie("accessToken", accessToken, options);
   res.cookie("refreshToken", refreshToken, options);
 
-  const redirectUrl =
-    NODE_ENV === "development"
-      ? `${FRONTEND_URL}/room`
-      : `${PROD_FRONTEND_URL}/room`;
-
-  return res.redirect("https://sync-sphere-eight.vercel.app/room");
-  //   return res.redirect(redirectUrl);
+  return res.redirect(`${FRONTEND_URL}/room`);
 });
 
 const handelGoogleLogout = asyncHandler(async (req, res, next) => {

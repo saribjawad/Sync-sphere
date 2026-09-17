@@ -2,7 +2,7 @@ import express, { Express } from "express";
 import cors from "cors";
 import errorHandler from "./middlewares/errorHandler.middleware.js";
 import WebSocketService from "./websocket/WebSocketService.js";
-import { FRONTEND_URL, NODE_ENV, PROD_FRONTEND_URL } from "./config/config.js";
+import { FRONTEND_URL } from "./config/config.js";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import passport from "passport";
@@ -15,8 +15,7 @@ const app: Express = express();
 
 app.use(
   cors({
-    // origin: NODE_ENV === "production" ? PROD_FRONTEND_URL : FRONTEND_URL,
-    origin: "https://sync-sphere-eight.vercel.app",
+    origin: new URL(FRONTEND_URL).origin,
 
     credentials: true,
     // methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],

@@ -1,10 +1,9 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import {
-  FRONTEND_URL,
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
-  PROD_FRONTEND_URL,
+  GOOGLE_CALLBACK_URL,
 } from "./config.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -14,17 +13,7 @@ passport.use(
     {
       clientID: GOOGLE_CLIENT_ID!,
       clientSecret: GOOGLE_CLIENT_SECRET!,
-      callbackURL:
-        // process.env.NODE_ENV === "production"
-        //   ?
-        "https://sync-spheree.onrender.com/api/v1/auth/google/callback",
-      // callbackUrl,
-      //   :
-      // "http://localhost:3000/api/v1/auth/google/callback",
-      // // callbackUrl,
-      // process.env.NODE_ENV === "production"
-      //   ? `${PROD_FRONTEND_URL}/api/v1/auth/google/callback`
-      //   : `${FRONTEND_URL}/api/v1/auth/google/callback`,
+      callbackURL: GOOGLE_CALLBACK_URL,
     },
     async (accessToken, refreshToken, profile, done) => {
       const {

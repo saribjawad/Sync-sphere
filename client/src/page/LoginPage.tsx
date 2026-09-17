@@ -1,16 +1,11 @@
 import Button from "../component/Button";
 import { FcGoogle } from "react-icons/fc";
 import Navbar from "../component/Navbar";
+import { API_URL } from "../config/endpoints";
 
 function LoginPage() {
   const handleLogin = () => {
-    const API_URL = import.meta.env.VITE_API_BASE_URL;
-    const baseURL =
-      window.location.hostname === "localhost"
-        ? "http://localhost:3000/api/v1/auth/google"
-        : `${API_URL}/auth/google`;
-
-    window.location.href = baseURL;
+    window.location.href = `${API_URL}/auth/google`;
   };
 
   return (

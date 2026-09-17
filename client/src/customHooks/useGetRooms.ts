@@ -24,12 +24,12 @@ export const useGetRooms = () => {
     queryFn: async (): Promise<UseGetRoomResponseType> => {
       try {
         const response = await api.get("/room/get-all-rooms");
-        const parsedResponse = UseGetRoomResponseSchema.safeParse(
+        const parsedResponse = UseGetRoomResponseSchema.parse(
           response.data
         );
-        dispatch(setAllRooms(parsedResponse?.data?.data!));
+        dispatch(setAllRooms(parsedResponse.data));
 
-        return parsedResponse.data!;
+        return parsedResponse;
       } catch (error) {
         let errorMessage = "Something went wrong while fetching rooms";
         if (error instanceof AxiosError) {

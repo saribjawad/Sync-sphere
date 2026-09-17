@@ -1,13 +1,10 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import { API_URL } from "./endpoints";
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
 }
 
-const API_URL =
-  import.meta.env.MODE === "development"
-    ? import.meta.env.VITE_API_BASE_URL_LOCAL
-    : import.meta.env.VITE_API_BASE_URL;
 export const api = axios.create({
   baseURL: API_URL,
   withCredentials: true,

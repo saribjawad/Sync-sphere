@@ -33,6 +33,7 @@ import {
 } from "../features/song/song.slice";
 import { store } from "../app/store";
 import { useLoadingContext } from "./loadingActionProvider";
+import { WEBSOCKET_URL } from "../config/endpoints";
 
 interface WebSocketContextType {
   sendMessage: (payload: any, action: string) => boolean;
@@ -65,12 +66,7 @@ export const WebSocketProvider = ({
 
   useEffect(() => {
     console.log("Setting up WebSocket connection");
-    const url =
-      import.meta.env.MODE === "development"
-        ? "ws://localhost:3000"
-        : "wss://sync-spheree.onrender.com";
-
-    const socket = new WebSocket(url);
+    const socket = new WebSocket(WEBSOCKET_URL);
     socketRef.current = socket;
 
     socket.onopen = () => {

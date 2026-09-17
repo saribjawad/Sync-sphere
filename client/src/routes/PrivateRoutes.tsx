@@ -28,6 +28,6 @@ function PrivateRoutes() {
     );
   }
 
-  return <Outlet />;
+  return isAuthenticated ? <Outlet /> : null;
 }
 export default PrivateRoutes;
