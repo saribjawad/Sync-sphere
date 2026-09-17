@@ -8,6 +8,7 @@ import RoomService from "../services/RoomService.js";
 import { ClientMessage } from "../websocket/WebSocketService.js";
 import { WebSocket } from "ws";
 import { z } from "zod";
+import { getChatHistory } from "../services/ChatService.js";
 
 interface IHandleArg {
   ws: WebSocket;
@@ -139,6 +140,7 @@ export async function handleRefreshJoinRoom({
       "REFRESH_ROOM",
       noOfJoinedUsers
     );
+    wsService.sendMessage(ws, "CHAT_HISTORY", await getChatHistory(ws, { roomId }));
   } catch (error) {
     console.error("Error refresh join room:", error);
     let errMessage =

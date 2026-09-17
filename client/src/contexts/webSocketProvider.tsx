@@ -34,6 +34,7 @@ import {
 import { store } from "../app/store";
 import { useLoadingContext } from "./loadingActionProvider";
 import { WEBSOCKET_URL } from "../config/endpoints";
+import { addChatMessage, addChatReaction, setChatHistory, setChatError, chatMessageSchema, chatReactionSchema, chatHistorySchema } from "../features/chat/chat.slice";
 
 interface WebSocketContextType {
   sendMessage: (payload: any, action: string) => boolean;
@@ -78,6 +79,26 @@ export const WebSocketProvider = ({
       const parsedServerMessage = ServerMessageSchema.safeParse(serverMessage);
 
       switch (parsedServerMessage.data?.action) {
+        case "CHAT_HISTORY": {
+          const result = chatHistorySchema.safeParse(parsedServerMessage.data.payload);
+          if (result.success) dispatch(setChatHistory(result.data));
+          break;
+        }
+        case "CHAT_MESSAGE": {
+          const result = chatMessageSchema.safeParse(parsedServerMessage.data.payload);
+          if (result.success) dispatch(addChatMessage(result.data));
+          break;
+        }
+        case "CHAT_REACTION": {
+          const result = chatReactionSchema.safeParse(parsedServerMessage.data.payload);
+          if (result.success) dispatch(addChatReaction(result.data));
+          break;
+        }
+        case "CHAT_ERROR": {
+          const payload = parsedServerMessage.data.payload;
+          if (typeof payload?.roomId === "string" && typeof payload?.message === "string") dispatch(setChatError(payload));
+          break;
+        }
         case "CREATE_ROOM":
           dispatch(setLiveRoom(parsedServerMessage.data.payload));
           dispatch(setUserIsLive(parsedServerMessage.data.payload._id));

@@ -12,6 +12,7 @@ This app is hosted on a free instance of Render.com, which may spin down due to 
 - Create and join rooms
 - Add YouTube videos to a shared queue
 - Upvote videos to decide what plays next
+- Room chat with recent session history and live emoji reactions
 - See others' timestamps and sync instantly
 - Seamless co-watching experience
 - If a user disconnects, the app will wait for 1 minute before removing them from the room or ending it if they were the host
@@ -114,3 +115,19 @@ Real-time: WebSockets
 ### Contributing
 
 Pull requests are welcome! Feel free to open an issue for feature suggestions or bug reports.
+
+### Room chat
+
+The listening page includes chat below the player. Messages are limited to 500
+characters; the last 100 are kept in memory for the active room session. They
+survive a page refresh while the room remains active, but are cleared when the
+room ends or the server restarts. Emoji reactions disappear after a few seconds
+and are not saved to history.
+
+Only authenticated room members can send or read chat. Sender names come from
+the server, and messages/reactions share a limit of five sends per five seconds
+per user in a room. Drafts remain until the server confirms delivery.
+
+Run the focused checks with `npm run test:chat --prefix server` and
+`npm run test:chat --prefix client`. The server tests use mocked database
+responses and do not access your live database.

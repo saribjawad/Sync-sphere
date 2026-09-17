@@ -25,7 +25,7 @@ declare global {
 }
 
 interface IYoutubeDisplaySectionProps {
-  currentSong: SongType;
+  currentSong: SongType | null | undefined;
   isAdmin: boolean;
 }
 

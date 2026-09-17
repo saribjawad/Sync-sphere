@@ -22,6 +22,8 @@ import { User } from "../models/user.model.js";
 import { Room } from "../models/room.model.js";
 import { Song } from "../models/song.model.js";
 import RoomService from "../services/RoomService.js";
+import { sendChat } from "../services/ChatService.js";
+import { ZodError } from "zod";
 
 export interface ClientMessage {
   action: string;
@@ -40,7 +42,7 @@ class WebSocketService {
   private timeouts: Map<string, NodeJS.Timeout> = new Map();
 
   constructor(server: Server) {
-    this.wss = new WebSocketServer({ server });
+    this.wss = new WebSocketServer({ server, maxPayload: 64 * 1024 });
     this.wss.on("connection", this.handleConnection.bind(this));
   }
 
@@ -81,6 +83,19 @@ class WebSocketService {
       const clientData: ClientMessage = JSON.parse(data);
 
       switch (clientData.action) {
+        case "CHAT_MESSAGE":
+        case "CHAT_REACTION":
+          try {
+            await sendChat(ws, clientData.action, clientData.payload);
+          } catch (error) {
+            this.sendMessage(ws, "CHAT_ERROR", {
+              roomId: clientData.payload?.roomId,
+              message: error instanceof ZodError
+                ? "Use 1–500 characters or choose one of the reaction buttons."
+                : error instanceof Error ? error.message : "Could not send. Try again.",
+            });
+          }
+          break;
         case "CREATE_ROOM":
           await handleCreateRoom({ ws, clientData, wsService: this });
           break;

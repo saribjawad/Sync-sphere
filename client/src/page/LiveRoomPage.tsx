@@ -1,5 +1,7 @@
 import { useEffect } from "react";
-import { useAppSelector } from "../app/hook";
+import { useAppDispatch, useAppSelector } from "../app/hook";
+import RoomChat from "../component/RoomChat";
+import { openChat, closeChat } from "../features/chat/chat.slice";
 import Navbar from "../component/Navbar";
 import SongQueueDisplaySection from "../component/SongQueueDisplaySection";
 import LoadingBar from "../component/ui/LoadingBar";
@@ -12,6 +14,7 @@ import { showToast } from "../utils/showToast";
 import { selectUserInfo } from "../features/auth/auth.slice";
 
 function LiveRoomPage() {
+  const dispatch = useAppDispatch();
   const { isLoading } = useGetLiveRoom();
   const liveRoom = useAppSelector(selectLiveRoom);
   const loggedInUser = useAppSelector(selectUserInfo);
@@ -19,6 +22,11 @@ function LiveRoomPage() {
   const { isConnected, sendMessage } = useWebSocketContext();
 
   const isAdmin = liveRoom?.owner._id === loggedInUser?._id;
+
+  useEffect(() => {
+    if (roomId) dispatch(openChat(roomId));
+    return () => { dispatch(closeChat()); };
+  }, [roomId, dispatch]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -34,7 +42,7 @@ function LiveRoomPage() {
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [isConnected, roomId]);
+  }, [isConnected, roomId, sendMessage]);
 
   if (isLoading) {
     return (
@@ -52,10 +60,13 @@ function LiveRoomPage() {
         isAdmin={isAdmin}
       />
       <section className="flex-1 rounded-md xl:flex-row flex-col dark:bg-background_dark bg-background_light sm:p-5 p-3 flex gap-3">
-        <YoutubeDisplaySection
-          currentSong={liveRoom?.currentSong!}
-          isAdmin={isAdmin}
-        />
+        <div className="flex min-w-0 flex-1 flex-col gap-4">
+          <YoutubeDisplaySection
+            currentSong={liveRoom?.currentSong}
+            isAdmin={isAdmin}
+          />
+          {roomId && <RoomChat key={roomId} roomId={roomId} />}
+        </div>
         <span className="xl:w-[1px] w-full xl:h-auto h-[1px]  dark:bg-text_dark bg-text_light"></span>
         <SongQueueDisplaySection />
       </section>

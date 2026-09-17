@@ -5,7 +5,8 @@
   "scripts": {
     "build": "npx tsc --project tsconfig.json && tsc-alias -p tsconfig.json",
     "start": "node -r tsconfig-paths/register dist/index.js",
-    "dev": "nodemon --exec tsx -r tsconfig-paths/register src/index.ts"
+    "dev": "nodemon --exec tsx -r tsconfig-paths/register src/index.ts",
+    "test:chat": "npm run build && node --test tests/chat.test.mjs"
   },
   "keywords": [],
   "author": "",
