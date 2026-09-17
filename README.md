@@ -52,35 +52,56 @@ cd client
 npm run dev
 ```
 
-### Deployment environment
+### Deploy frontend and backend together on Render
 
-Set these variables in your hosting dashboards before deploying:
+Use the existing Render **Web Service** for both Express and the built React app.
+All browser traffic (pages, Google login, API calls, and WebSockets) then uses the
+same origin, avoiding third-party login cookies.
 
-| Service           | Variable              | Value for the current deployment                                |
-| ----------------- | --------------------- | --------------------------------------------------------------- |
-| Frontend (Vercel) | `VITE_API_BASE_URL`   | `https://sync-spheree.onrender.com/api/v1`                      |
-| Backend (Render)  | `NODE_ENV`            | `production`                                                    |
-| Backend (Render)  | `FRONTEND_URL`        | `https://sync-sphere-eight.vercel.app`                          |
-| Backend (Render)  | `GOOGLE_CALLBACK_URL` | `https://sync-spheree.onrender.com/api/v1/auth/google/callback` |
+In the existing service's Settings, configure:
 
-Use your actual domains if they change. Keep the existing Google credentials,
-MongoDB settings, and token secrets on the backend. `FRONTEND_URL` controls the
-login redirect and allowed CORS origin. `GOOGLE_CALLBACK_URL` must exactly match
-an authorized redirect URI in the Google OAuth client configuration.
+| Setting | Value |
+| --- | --- |
+| Root Directory | Leave blank (repository root, not `server`) |
+| Build Command | `bash scripts/render-build.sh` |
+| Start Command | `npm start --prefix server` |
 
-`PROD_FRONTEND_URL` and `VITE_API_BASE_URL_LOCAL` are no longer used. Set
-`FRONTEND_URL` and `VITE_API_BASE_URL` separately in each environment instead.
-The WebSocket URL is derived from the API origin, using `wss` for HTTPS.
-The frontend uses absolute API URLs and does not need a Vite proxy.
+Render must have access to both `client` and `server`; files outside a configured
+root directory are unavailable. See [Render monorepo documentation](https://render.com/docs/monorepo-support).
+If build filters previously only included `server`, remove them or include
+`client/**`, `server/**`, and `scripts/**`.
 
-Restart local processes after environment changes. Frontend environment values
-are embedded at build time, so rebuild/redeploy the frontend when they change.
-Only public configuration belongs in `VITE_` variables; keep secrets on the server.
-Local `.env` files are ignored by Git; the example files contain no credentials.
+Set these environment variables on that service:
 
-Deployment addresses live in environment settings. YouTube integration URLs,
-the Google Fonts stylesheet, and SVG namespace identifiers are fixed third-party
-resources and remain in the source.
+```env
+NODE_ENV=production
+FRONTEND_URL=https://sync-spheree.onrender.com
+GOOGLE_CALLBACK_URL=https://sync-spheree.onrender.com/api/v1/auth/google/callback
+```
+
+Keep existing Google credentials, MongoDB settings, and token secrets. Render
+provides `PORT`. Use your service's actual URL if its name differs.
+The Google OAuth client's authorized redirect URIs must include the exact
+`GOOGLE_CALLBACK_URL` above; the existing callback can stay unchanged.
+
+The build script installs both packages (including build dependencies), builds
+React with `VITE_API_BASE_URL=/api/v1`, and compiles Express. It overrides any old
+frontend API URL for this build. Express serves `client/dist` in production,
+including React routes such as `/room`; unknown API routes still return JSON 404s.
+WebSockets connect to the page's host using `wss` on HTTPS.
+
+Push the changes and deploy the existing service. Open
+`https://sync-spheree.onrender.com` instead of the Vercel URL, re-enable Firefox
+tracking protection, and log in. Verify that refreshing `/room` works and the
+WebSocket connects. The old Vercel deployment is no longer needed for this setup.
+
+Local development remains two processes: keep the absolute localhost API URL
+from `client/.env.example` in `client/.env.development.local`. Keep the local
+frontend and callback URLs from `server/.env.example` in `server/.env`.
+
+Local environment files are ignored by Git. Only public configuration belongs
+in `VITE_` variables; keep secrets on the server. YouTube integration URLs,
+Google Fonts, and SVG namespace identifiers remain fixed third-party resources.
 
 ### Tech Stack
 

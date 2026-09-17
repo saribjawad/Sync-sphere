@@ -1,14 +1,11 @@
-const configuredApiUrl = import.meta.env.VITE_API_BASE_URL?.trim();
-if (!configuredApiUrl) {
-  throw new Error("Missing required environment variable: VITE_API_BASE_URL");
-}
+const configuredApiUrl = import.meta.env.VITE_API_BASE_URL?.trim() || "/api/v1";
 
-const apiUrl = new URL(configuredApiUrl);
+const apiUrl = new URL(configuredApiUrl, window.location.origin);
 if (
   !["http:", "https:"].includes(apiUrl.protocol) ||
   apiUrl.username || apiUrl.password || apiUrl.search || apiUrl.hash
 ) {
-  throw new Error("VITE_API_BASE_URL must be an absolute HTTP or HTTPS URL without credentials, a query, or a fragment");
+  throw new Error("VITE_API_BASE_URL must be an HTTP(S) URL or path without credentials, a query, or a fragment");
 }
 export const API_URL = apiUrl.toString().replace(/\/+$/, "");
 
