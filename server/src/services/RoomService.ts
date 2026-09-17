@@ -159,8 +159,6 @@ class RoomService {
 
       const room = await Room.findById(roomId);
 
-      console.log(room, "Room for adding song");
-
       if (!room) {
         throw new ApiError(404, "Room not found");
       }
@@ -169,13 +167,9 @@ class RoomService {
 
       const extractedId = extractYouTubeID(songUrl);
 
-      console.log(extractedId, "Extracted ID");
-
       const { title, channel } = await youtubesearchapi.GetVideoDetails(
         extractedId
       );
-
-      console.log(title, "Title");
 
       const validatedData = extractedSongSchema.parse({
         externalId: extractedId,
@@ -196,7 +190,6 @@ class RoomService {
       } else {
         updateQuery = { $push: { songQueue: filteredSong } };
       }
-      console.log(updateQuery, "query for adding song");
 
       await Room.findByIdAndUpdate(roomId, updateQuery, {
         new: true,
@@ -254,7 +247,6 @@ class RoomService {
 
       // Set up disconnect handler for the WebSocket
       ws.on("close", () => {
-        console.log(`WebSocket disconnected from room ${roomId}`);
         activeRoomSession.users.delete(ws);
       });
 

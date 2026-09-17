@@ -10,6 +10,7 @@ export const api = axios.create({
   withCredentials: true,
 });
 
+// Refresh once when several requests fail together, then retry the waiting requests.
 let isRefreshing = false;
 let failedQueue: Array<{
   resolve: (value?: unknown) => void;

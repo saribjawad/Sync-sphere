@@ -16,8 +16,6 @@ interface IHandleArg {
 
 export async function handleAddSong({ clientData, ws, wsService }: IHandleArg) {
   try {
-    console.log("add song");
-
     const parsedAddSongData = AddSongSchema.safeParse(clientData.payload);
 
     if (!parsedAddSongData.success) {
@@ -29,7 +27,6 @@ export async function handleAddSong({ clientData, ws, wsService }: IHandleArg) {
     }
 
     const { roomId, songUrl } = parsedAddSongData.data;
-    console.log("entering room service.addsong");
     const { filteredSong: addedSong, roomUsers } = await RoomService.addSong({
       songUrl,
       roomId,
@@ -54,7 +51,6 @@ export async function handleDeleteSong({
   try {
     const parsedDeleteSongData = DeleteSongSchema.safeParse(clientData.payload);
     if (!parsedDeleteSongData.success) {
-      console.log(parsedDeleteSongData.error);
       const errorMsg = parsedDeleteSongData.error.errors
         .map((err) => err.message)
         .join(", ");
@@ -93,7 +89,6 @@ export async function handleUpVoteSong({
     const parsedUpVoteSongData = UpVoteSongSchema.safeParse(clientData.payload);
 
     if (!parsedUpVoteSongData.success) {
-      console.log(parsedUpVoteSongData.error);
       const errorMsg = parsedUpVoteSongData.error.errors
         .map((err) => err.message)
         .join(", ");
@@ -132,14 +127,12 @@ export async function handlePlayNextSong({
   ws,
   wsService,
 }: IHandleArg) {
-  console.log(clientData);
   try {
     const parsedPlayNextSongData = PlayNextSongSchema.safeParse(
       clientData.payload
     );
 
     if (!parsedPlayNextSongData.success) {
-      console.log(parsedPlayNextSongData.error);
       const errorMsg = parsedPlayNextSongData.error.errors
         .map((err) => err.message)
         .join(", ");

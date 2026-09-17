@@ -26,7 +26,6 @@ const verifyJWT = asyncHandler(async (req, _, next) => {
     ) as JwtPayload;
 
     const user = await User.findById(decodedToken?._id);
-    // console.log(user);
 
     if (!user) {
       throw new ApiError(401, "Invalid access token");

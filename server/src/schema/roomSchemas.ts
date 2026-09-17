@@ -20,5 +20,4 @@ export const JoinRoomSchema = z.object({
 
 export const RefreshJoinRoomSchema = z.object({
   roomId: z.string(),
-  //   userId: z.string().regex(objectIdRegex),
 });

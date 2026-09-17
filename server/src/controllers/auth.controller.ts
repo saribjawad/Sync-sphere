@@ -1,7 +1,6 @@
 import { Profile } from "passport-google-oauth20";
 import jwt from "jsonwebtoken";
-import { ObjectId } from "mongoose";
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { IUser, User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -22,11 +21,11 @@ const generateAccessAndRefreshToken = async (
       throw new Error("User not found");
     }
 
-    const accessToken = user?.generateAccessToken();
-    const refreshToken = user?.generateRefreshToken();
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
-    user?.save({ validateBeforeSave: false });
+    user.save({ validateBeforeSave: false });
 
     return { accessToken, refreshToken };
   } catch (error) {
@@ -37,7 +36,7 @@ const generateAccessAndRefreshToken = async (
   }
 };
 
-const refreshAcccessToken = asyncHandler(async (req, res) => {
+const refreshAccessToken = asyncHandler(async (req, res) => {
   const incomingRequestToken =
     req.cookies.refreshToken || req.body.refreshToken;
 
@@ -119,7 +118,7 @@ const handleGoogleLogin = asyncHandler(async (req, res) => {
   return res.redirect(`${FRONTEND_URL}/room`);
 });
 
-const handelGoogleLogout = asyncHandler(async (req, res, next) => {
+const handleGoogleLogout = asyncHandler(async (req, res, next) => {
   try {
     const { _id: userId } = req.user as IUser;
 
@@ -169,12 +168,12 @@ const getUserInfo = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new ApiResponse(200, user, "User info fetched succesfully"));
+    .json(new ApiResponse(200, user, "User info fetched successfully"));
 });
 
 export {
   handleGoogleLogin,
-  handelGoogleLogout,
+  handleGoogleLogout,
   getUserInfo,
-  refreshAcccessToken,
+  refreshAccessToken,
 };

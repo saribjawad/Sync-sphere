@@ -23,7 +23,6 @@ function LoginPage() {
               <span className="key">O</span>
               <span className="key">O</span>
               <span className="key">M</span>
-              {/* <span className="key">C,</span> */}
             </span>
             Your Rules!
           </h1>

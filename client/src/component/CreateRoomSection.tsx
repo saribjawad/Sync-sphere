@@ -17,10 +17,6 @@ function CreateRoomSection() {
 
   const providers = [
     { name: "youtube", icon: <FaYoutube size={30} color="#F70000" /> },
-    // {
-    //   name: "soundcloud",
-    //   icon: <RiSoundcloudFill size={30} color="#F76F0D" />,
-    // },
   ];
 
   const handleCreateRoom = (roomName: string, roomPassword: string) => {

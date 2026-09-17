@@ -65,12 +65,10 @@ export const WebSocketProvider = ({
   }, []);
 
   useEffect(() => {
-    console.log("Setting up WebSocket connection");
     const socket = new WebSocket(WEBSOCKET_URL);
     socketRef.current = socket;
 
     socket.onopen = () => {
-      console.log("WebSocket Connected");
       setIsConnected(true);
     };
 
@@ -190,12 +188,9 @@ export const WebSocketProvider = ({
         default:
           break;
       }
-
-      //   console.log("Received:", parsedServerMessage);
     };
 
     socket.onclose = () => {
-      console.log("WebSocket Disconnected");
       setIsConnected(false);
     };
 
@@ -204,9 +199,8 @@ export const WebSocketProvider = ({
       setIsConnected(false);
     };
 
-    // Clean up function
+    // Close the connection when leaving the room routes.
     return () => {
-      console.log("Cleaning up WebSocket");
       if (
         socket &&
         (socket.readyState === WebSocket.OPEN ||

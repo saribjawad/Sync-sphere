@@ -62,7 +62,6 @@ class WebSocketService {
         disconnectedAt: null,
       });
 
-      console.log(`User ${id} reconnected, clearing timeout`);
     } catch (error) {
       ws.close(4401, "Unauthorized");
       return;
@@ -123,7 +122,6 @@ class WebSocketService {
           break;
 
         case "SYNC_ALL":
-          console.log(clientData.payload);
           handleSyncAll({ ws, clientData, wsService: this });
           break;
 
@@ -148,7 +146,7 @@ class WebSocketService {
       this.timeouts.delete(userId!);
     }
 
-    // temp disconnected
+    // Preserve room membership briefly so a page refresh can reconnect.
     try {
       await User.findByIdAndUpdate(
         userId,
@@ -164,7 +162,7 @@ class WebSocketService {
       console.error("Failed to update user disconnection status:", error);
     }
 
-    // const user = await User.findById(userId);
+    // Wait 15 seconds before cleaning up a disconnected user's room.
     const timeout = setTimeout(async () => {
       try {
         const user = await User.findById(userId);
@@ -185,9 +183,6 @@ class WebSocketService {
         if (user?.isAlive) {
           const room = await Room.findById(user.rooms[0]);
 
-          //   if (!room) {
-          //     throw new ApiError(404, "Room not found");
-          //   }
           if (!room) return;
 
           const activeRoomSession = RoomService.rooms.get(String(room._id));
@@ -237,9 +232,6 @@ class WebSocketService {
         if (user?.isJoined.status) {
           const room = await Room.findOne({ users: user._id });
 
-          //   if (!room) {
-          //     throw new ApiError(404, "Room not found");
-          //   }
           if (!room) return;
 
           const activeRoomSession = RoomService.rooms.get(String(room._id));
@@ -255,7 +247,7 @@ class WebSocketService {
           await user.save({ validateBeforeSave: false });
 
           if (activeRoomSession) {
-            this.sendMessageToEveryoneExpectSenderInRoom(
+            this.sendMessageToEveryoneExceptSenderInRoom(
               ws,
               connectedClients!,
               "LEFT_ROOM",
@@ -353,7 +345,7 @@ class WebSocketService {
   }
 
   // send to everyone in room except sender
-  public sendMessageToEveryoneExpectSenderInRoom(
+  public sendMessageToEveryoneExceptSenderInRoom(
     ws: WebSocket,
     roomUsers: WebSocket[] | Set<WebSocket>,
     action: string,

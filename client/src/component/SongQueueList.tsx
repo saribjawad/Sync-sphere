@@ -76,7 +76,6 @@ function SongQueueList({ song }: { song: SongType }) {
           )}
         </button>
         <span className="text-sm">{song?.noOfVote}</span>
-        {/* add for active !!! text-text_dark_secondary */}
 
         {isAdmin && (
           <button

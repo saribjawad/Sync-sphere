@@ -15,7 +15,7 @@ passport.use(
       clientSecret: GOOGLE_CLIENT_SECRET!,
       callbackURL: GOOGLE_CALLBACK_URL,
     },
-    async (accessToken, refreshToken, profile, done) => {
+    async (_accessToken, _refreshToken, profile, done) => {
       const {
         _json: { name, email, picture: avatar, sub: googleId },
       } = profile;

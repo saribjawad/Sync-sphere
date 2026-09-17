@@ -84,7 +84,7 @@ export async function handleJoinRoom({
       userId,
     });
     if (joinedRoomData) {
-      wsService.sendMessageToEveryoneExpectSenderInRoom(
+      wsService.sendMessageToEveryoneExceptSenderInRoom(
         ws,
         joinedRoomData.connectedClients,
         "USER_JOINED",
@@ -177,7 +177,7 @@ export async function handleLeaveRoom({
       roomId,
     });
 
-    wsService.sendMessageToEveryoneExpectSenderInRoom(
+    wsService.sendMessageToEveryoneExceptSenderInRoom(
       ws,
       connectedClient,
       "LEFT_ROOM",
