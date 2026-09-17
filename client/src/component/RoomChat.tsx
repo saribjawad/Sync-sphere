@@ -7,7 +7,7 @@ import {
 	setChatError,
 } from "../features/chat/chat.slice";
 
-export default function RoomChat({ roomId }: { roomId: string }) {
+export default function RoomChat({ roomId, active = true }: { roomId: string; active?: boolean }) {
 	const dispatch = useAppDispatch();
 
 	const { messages, reactions, ready, error } = useAppSelector(
@@ -31,7 +31,7 @@ export default function RoomChat({ roomId }: { roomId: string }) {
 		if (followLatest.current && listRef.current) {
 			listRef.current.scrollTop = listRef.current.scrollHeight;
 		}
-	}, [messages]);
+	}, [messages, active]);
 
 	useEffect(() => {
 		if (!pending) return;
@@ -131,9 +131,9 @@ export default function RoomChat({ roomId }: { roomId: string }) {
 	return (
 		<section
 			aria-labelledby="room-chat-title"
-			className="min-w-0 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-background_light dark:bg-background_dark_secondary"
+			className="flex min-h-0 min-w-0 flex-1 flex-col"
 		>
-			<header className="flex items-center justify-between gap-3 border-b border-zinc-200 dark:border-zinc-800 px-4 py-3">
+			<header className="sr-only">
 				<h2 id="room-chat-title" className="font-semibold">
 					Room chat
 				</h2>
@@ -157,7 +157,7 @@ export default function RoomChat({ roomId }: { roomId: string }) {
 						followLatest.current =
 							list.scrollHeight - list.scrollTop - list.clientHeight < 60;
 				}}
-				className="h-64 overflow-y-auto overscroll-contain px-4 py-3 space-y-4"
+				className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3 space-y-4"
 			>
 				{!messages.length && (
 					<div className="flex h-full flex-col items-center justify-center text-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
@@ -191,11 +191,11 @@ export default function RoomChat({ roomId }: { roomId: string }) {
 					</article>
 				))}
 			</div>
-			<div className="border-t border-zinc-200 dark:border-zinc-800 px-4 py-3">
+			<div className="shrink-0 border-t border-zinc-200 dark:border-zinc-800 p-3">
 				<div
 					aria-live="polite"
 					aria-label="Live reactions"
-					className="flex min-h-7 gap-2 overflow-hidden text-xs text-zinc-600 dark:text-zinc-300"
+					className="flex gap-2 overflow-hidden text-xs text-zinc-600 dark:text-zinc-300"
 				>
 					{reactions.slice(-3).map((reaction) => (
 						<span key={reaction.id} className="truncate">
@@ -215,7 +215,7 @@ export default function RoomChat({ roomId }: { roomId: string }) {
 							disabled={!canSend}
 							aria-label={`React with ${["love", "fire", "laughter", "applause", "music", "celebration"][index]}`}
 							onClick={() => react(emoji)}
-							className="rounded-lg px-3 py-2 text-xl hover:bg-background_light_secondary dark:hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-40 disabled:cursor-not-allowed"
+							className="rounded-lg px-2 py-1.5 text-lg hover:bg-background_light_secondary dark:hover:bg-zinc-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-40 disabled:cursor-not-allowed"
 						>
 							{emoji}
 						</button>
@@ -256,7 +256,7 @@ export default function RoomChat({ roomId }: { roomId: string }) {
 						{error ||
 							(!isConnected
 								? "Connection lost. Reload to reconnect."
-								: "Be kind. Enjoy the music.")}
+								: "")}
 					</span>
 					<span className="shrink-0">{draft.length}/500</span>
 				</div>

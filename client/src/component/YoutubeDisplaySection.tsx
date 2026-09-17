@@ -197,7 +197,7 @@ function YoutubeDisplaySection({
   }, [roomTimestamps]);
 
   return (
-    <section className=" xl:flex-1  flex flex-col gap-3">
+    <section className="flex min-w-0 flex-col gap-3">
       {/* stream buttons */}
       <div className="flex items-center justify-between">
         <div className="text-sm flex items-center gap-2 justify-center">
@@ -219,12 +219,12 @@ function YoutubeDisplaySection({
         )}
       </div>
 
-      <div className="aspect-video xl:aspect-auto xl:h-[90%] w-full  relative">
+      <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-900">
         <SyncToInfo handleSyncAll={handleSyncAll} isOpen={isSyncToInfoOpen} />
 
         {!currentSong ? (
           <div className="h-full w-full flex items-center justify-center sm:text-base text-sm  ">
-            No current video/song playing right now, Add video/songs to play!
+            Add a song to start listening.
           </div>
         ) : (
           <div
@@ -235,9 +235,9 @@ function YoutubeDisplaySection({
         )}
       </div>
 
-      <div className="flex items-center justify-between  h-fit">
-        <div className="">
-          <h1 className="md:text-base text-sm">{currentSong?.title}</h1>
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="truncate text-sm font-medium">{currentSong?.title}</h1>
           <span className="md:text-sm text-xs text-text_dark_secondary dark:text-zinc-500">
             {currentSong?.artist}
           </span>

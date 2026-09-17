@@ -53,16 +53,18 @@ function SongQueueList({ song }: { song: SongType }) {
   };
 
   return (
-    <div className="w-full flex items-center justify-between  bg-background_light dark:bg-background_dark rounded-md p-2 gap-2">
-      <div>
-        <h1 className="sm:text-sm text-xs">{song?.title}</h1>
-        <p className="text-xs dark:text-zinc-500 text-text_dark_secondary">
+    <div className="w-full flex items-center justify-between py-3 gap-2">
+      <div className="min-w-0">
+        <h1 className="line-clamp-2 text-sm">{song?.title}</h1>
+        <p className="mt-1 truncate text-xs text-zinc-500 dark:text-zinc-400">
           {song?.artist}
         </p>
       </div>
-      <div className="flex items-center gap-3 flex-shrink-0 p-2">
+      <div className="flex items-center gap-2 flex-shrink-0">
         <button
           onClick={handleUpVoteSong}
+          aria-label={`Upvote ${song.title}`}
+          aria-pressed={isUpvoted}
           className={`  ${
             isUpvoted
               ? "text-text_dark_secondary"
@@ -80,6 +82,7 @@ function SongQueueList({ song }: { song: SongType }) {
         {isAdmin && (
           <button
             onClick={handleDeleteSong}
+            aria-label={`Remove ${song.title}`}
             className="dark:text-red-500 text-red-500"
           >
             {isLoading(`deleteSong-${song._id}`) ? (

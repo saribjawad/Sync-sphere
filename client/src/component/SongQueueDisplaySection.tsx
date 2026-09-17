@@ -4,54 +4,29 @@ import { selectSongQueue } from "../features/song/song.slice";
 import AddSongSection from "./AddSongSection";
 import SongQueueList from "./SongQueueList";
 import LoadingBar from "./ui/LoadingBar";
-import { motion, AnimatePresence } from "framer-motion";
+
 
 function SongQueueDisplaySection() {
   const { isLoading } = useGetSongQueue();
   const songQueue = useAppSelector(selectSongQueue);
 
   return (
-    <section className="xl:w-[400px] w-full flex flex-col gap-4 xl:min-h-[calc(100vh-144px)]">
-      <h1 className="font-semibold text-center flex-shrink-0">
-        Song/Video Queue
-      </h1>
-      {isLoading ? (
-        <div className="h-full w-full flex items-center justify-center">
-          <LoadingBar />
-        </div>
-      ) : (
-        <>
-          <AddSongSection />
-          <section className="flex-1 min-h-0 overflow-y-auto">
-            <motion.div
-              className="flex flex-col gap-3 xl:max-h-[0px] max-h-[400px]  xl:overflow-visible overflow-hidden "
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <AnimatePresence>
-                {songQueue &&
-                  songQueue.map((song) => (
-                    <motion.div
-                      key={song._id}
-                      layout
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: 10 }}
-                      transition={{
-                        type: "spring",
-                        stiffness: 200,
-                        damping: 20,
-                      }}
-                    >
-                      <SongQueueList song={song} />
-                    </motion.div>
-                  ))}
-              </AnimatePresence>
-            </motion.div>
-          </section>
-        </>
-      )}
+    <section aria-label="Song queue" className="flex min-h-0 flex-1 flex-col">
+      <div className="shrink-0 p-3"><AddSongSection /></div>
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-3 pb-3">
+        {isLoading ? (
+          <div className="flex h-full items-center justify-center"><LoadingBar /></div>
+        ) : songQueue?.length ? (
+          <div className="divide-y divide-zinc-100 dark:divide-zinc-800">
+            {songQueue.map(song => <SongQueueList key={song._id} song={song} />)}
+          </div>
+        ) : (
+          <div className="flex h-full flex-col items-center justify-center gap-1 text-center text-sm text-zinc-500 dark:text-zinc-400">
+            <p>What’s playing next?</p>
+            <p className="text-xs">Paste a YouTube link to add a song.</p>
+          </div>
+        )}
+      </div>
     </section>
   );
 }
