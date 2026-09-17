@@ -16,8 +16,7 @@ import {
 import { ApiError } from "../utils/ApiError.js";
 import { extractYouTubeID } from "../utils/extractYoutubeId.js";
 import { WebSocket } from "ws";
-// @ts-ignore
-import youtubesearchapi from "youtube-search-api";
+import { getYouTubeDetails } from "./YouTubeService.js";
 import { z } from "zod";
 
 const objectIdRegex = /^[a-f\d]{24}$/i;
@@ -166,10 +165,9 @@ class RoomService {
       const roomUsers = this.rooms.get(String(room._id))?.users;
 
       const extractedId = extractYouTubeID(songUrl);
+      if (!extractedId) throw new Error("Please enter a valid YouTube video URL.");
 
-      const { title, channel } = await youtubesearchapi.GetVideoDetails(
-        extractedId
-      );
+      const { title, channel } = await getYouTubeDetails(extractedId);
 
       const validatedData = extractedSongSchema.parse({
         externalId: extractedId,

@@ -18,6 +18,7 @@ const requiredHttpUrl = (name: string): string => {
 export const PORT = process.env.PORT;
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+export const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY?.trim();
 export const MONGODB_URI = process.env.MONGODB_URI;
 export const DB_NAME = process.env.DB_NAME;
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;

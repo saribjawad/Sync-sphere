@@ -131,3 +131,19 @@ per user in a room. Drafts remain until the server confirms delivery.
 Run the focused checks with `npm run test:chat --prefix server` and
 `npm run test:chat --prefix client`. The server tests use mocked database
 responses and do not access your live database.
+
+### YouTube video lookup on Render
+
+Enable **YouTube Data API v3** in your Google Cloud project and create an API
+key restricted to that API. Add `YOUTUBE_API_KEY` to your Render service's
+environment and redeploy. This is a server-side key, separate from your Google
+OAuth client ID/secret; do not put it in a `VITE_` variable.
+
+When the key is set, adding videos uses the official `videos.list` metadata
+endpoint. Without it, the existing keyless lookup remains available, but YouTube
+may rate-limit that lookup from hosting providers. API quota errors are shown
+without retrying repeatedly or falling back to scraping.
+
+See [Google's credential setup](https://developers.google.com/youtube/registering_an_application).
+Run `npm run build --prefix server` then
+`node --test server/tests/youtube.test.mjs` to check the mocked API responses.
